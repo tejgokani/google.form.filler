@@ -1,0 +1,109 @@
+Create a full-stack project named "AI Google Form Filler" that works both as a website and a Chrome extension. Use:
+- Frontend: React + TailwindCSS
+- Backend: Node.js (Express)
+- AI Integration: OpenAI API (via user-provided key)
+- Deployment Ready for Replit (port-based server)
+- Same core logic shared between website and Chrome extension popup.
+
+====================
+📁 Project Structure
+====================
+/client
+ ├── /src
+ │   ├── App.jsx
+ │   ├── components/
+ │   │    ├── FormInput.jsx      // input for form link, responses, and optional user data
+ │   │    ├── ProgressBar.jsx
+ │   │    ├── ResultCard.jsx
+ │   │    └── ErrorToast.jsx
+ │   ├── utils/
+ │   │    └── formParser.js      // parse HTML of Google Form to identify input types and names
+ │   ├── api/
+ │   │    └── api.js             // connect frontend with backend endpoints
+ │   └── main.jsx
+ ├── package.json
+/server
+ ├── index.js                    // main Express server file
+ ├── routes/
+ │   └── fillForm.js             // handles AI answer generation and submission logic
+ ├── services/
+ │   ├── openaiService.js        // uses OpenAI API for descriptive answers
+ │   ├── formSubmitter.js        // sends POST requests to Google Form endpoints
+ │   └── formAnalyzer.js         // identifies question types and builds payload
+ ├── utils/
+ │   └── randomizer.js           // for random MCQ/checkbox selections
+ ├── package.json
+/chrome-extension
+ ├── manifest.json
+ ├── background.js
+ ├── popup/
+ │   ├── popup.html
+ │   ├── popup.js
+ │   └── popup.css
+ └── shared/
+     └── logic.js                // same core function as backend to parse and fill forms
+
+====================
+🧩 Backend API Routes
+====================
+POST /api/parseForm
+  - Input: { formUrl: string }
+  - Output: Parsed question structure (array of { type, label, name, options })
+
+POST /api/fillForm
+  - Input: { formUrl: string, numResponses: number, userData: { email?, name? } }
+  - Process:
+      1. Parse the form (via formAnalyzer)
+      2. For each question, generate an answer using OpenAI (openaiService)
+      3. Construct payload and submit via formSubmitter
+      4. Repeat for numResponses
+  - Output: { successCount, failedCount, summary }
+
+====================
+🧠 AI Logic
+====================
+- For short/paragraph answers: Use OpenAI completion to generate natural text based on the question.
+- For MCQ/checkbox/dropdown: Randomly or logically pick options.
+- For linear scale: Generate random value in range.
+- For date/time: Use current date/time formatted correctly.
+- Maintain consistency for user data if provided (like same email across submissions).
+
+====================
+💻 Frontend Flow
+====================
+1. User pastes Google Form link.
+2. Enters number of responses (default = 1).
+3. Optionally enters name/email (if needed).
+4. Clicks “Generate & Fill”.
+5. Frontend calls `/api/fillForm`.
+6. Progress bar updates per submission.
+7. On success, show results and option to download CSV.
+
+====================
+🧩 Chrome Extension Behavior
+====================
+- Manifest v3
+- Popup with input fields for form link, response count, and basic info.
+- “Auto Fill” button triggers same logic as website via shared logic.js.
+- User can run it directly on open Google Form pages.
+- Permissions: activeTab, scripting.
+- Add instructions in README for loading unpacked extension.
+
+====================
+📦 Other Requirements
+====================
+- Use environment variables for API keys.
+- Handle errors gracefully (invalid links, AI failures, submission errors).
+- Include loading states and toasts.
+- Modular, well-commented, and open-source ready.
+- No persistent DB needed — use memory or temporary JSON storage.
+
+====================
+🚀 Goal
+====================
+Deliver a working AI-powered Google Form Filler that:
+- Automatically detects and fills all question types.
+- Can generate multiple valid responses.
+- Can run as both a web app and Chrome extension.
+- Uses OpenAI to make descriptive answers contextually meaningful.
+- Has clean UI/UX and clear documentation.

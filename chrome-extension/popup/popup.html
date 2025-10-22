@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Form Filler</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="title">AI Form Filler</h1>
+          <p class="subtitle">Automate with AI</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- Setup View (First Run) -->
+      <div id="setupView" class="view hidden">
+        <div class="setup-container">
+          <h3 class="setup-title">Welcome! Setup Required</h3>
+          <p class="setup-description">
+            Please enter your API server URL. This is a one-time setup.
+          </p>
+
+          <div class="form-group">
+            <label for="setupUrl" class="label">API Server URL</label>
+            <input
+              type="url"
+              id="setupUrl"
+              class="input"
+              placeholder="https://your-repl.replit.app"
+            />
+            <p class="helper-text">
+              For Replit: Use your Repl's full URL<br>
+              For local dev: http://localhost:5000
+            </p>
+          </div>
+
+          <button id="testConnectionBtn" class="btn btn-primary">
+            Test Connection
+          </button>
+
+          <div id="connectionStatus" class="connection-status hidden"></div>
+        </div>
+      </div>
+
+      <!-- Initial View -->
+      <div id="initialView" class="view">
+        <div class="form-group">
+          <label for="formUrl" class="label">Google Form URL</label>
+          <input
+            type="url"
+            id="formUrl"
+            class="input"
+            placeholder="https://docs.google.com/forms/..."
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="numResponses" class="label">Number of Responses</label>
+          <div class="stepper">
+            <button id="decreaseBtn" class="stepper-btn">−</button>
+            <input type="number" id="numResponses" class="stepper-input" value="1" min="1" max="100" readonly />
+            <button id="increaseBtn" class="stepper-btn">+</button>
+          </div>
+        </div>
+
+        <details class="accordion">
+          <summary class="accordion-trigger">Optional: User Data</summary>
+          <div class="accordion-content">
+            <div class="form-group">
+              <label for="userName" class="label">Name</label>
+              <input type="text" id="userName" class="input" placeholder="John Doe" />
+            </div>
+            <div class="form-group">
+              <label for="userEmail" class="label">Email</label>
+              <input type="email" id="userEmail" class="input" placeholder="john@example.com" />
+            </div>
+          </div>
+        </details>
+
+        <button id="fillFormBtn" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          Generate & Fill
+        </button>
+      </div>
+
+      <div id="processingView" class="view hidden">
+        <div class="progress-container">
+          <div class="progress-info">
+            <span class="progress-label">Processing...</span>
+            <span id="progressText" class="progress-value">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+          <p id="statusMessage" class="status-message">Analyzing questions...</p>
+        </div>
+      </div>
+
+      <div id="resultsView" class="view hidden">
+        <div class="results-stats">
+          <div class="stat-card stat-success">
+            <span class="stat-label">Success</span>
+            <span id="successCount" class="stat-value">0</span>
+          </div>
+          <div class="stat-card stat-error">
+            <span class="stat-label">Failed</span>
+            <span id="failedCount" class="stat-value">0</span>
+          </div>
+        </div>
+
+        <div id="resultsList" class="results-list"></div>
+
+        <button id="resetBtn" class="btn btn-secondary">Fill Another Form</button>
+      </div>
+
+      <div id="errorView" class="view hidden">
+        <div class="error-container">
+          <svg class="error-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <h3 class="error-title">Error</h3>
+          <p id="errorMessage" class="error-message"></p>
+          <button id="retryBtn" class="btn btn-secondary">Try Again</button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <span id="apiUrlDisplay" class="footer-link" style="font-size: 10px; opacity: 0.7;"></span>
+      <a href="#" id="reconfigureBtn" class="footer-link" style="margin-left: 12px;">Reconfigure</a>
+    </footer>
+  </div>
+
+  <script src="../config.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
